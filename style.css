@@ -1,0 +1,89 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+  color: white;
+  text-align: center;
+}
+
+section {
+  min-height: 100vh;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+}
+
+.hero p {
+  margin: 20px 0;
+  font-size: 1.3rem;
+}
+
+button {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 30px;
+  background: #ff4b7d;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: grid;
+  gap: 15px;
+  max-width: 400px;
+  margin: auto;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.gallery img {
+  width: 100%;
+  border-radius: 15px;
+}
+
+.proposal h1 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+#celebration {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
