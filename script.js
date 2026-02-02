@@ -1,37 +1,92 @@
-// Music Control - Enhanced Version
+// Music Control - Fixed Version
 let musicStarted = false;
 let musicPlaying = false;
+let music, musicBtn;
 
-// Get audio element
-const music = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicBtn');
-
-// Set volume (0.0 to 1.0)
-if (music) {
+// Wait for DOM to load
+document.addEventListener('DOMContentLoaded', function() {
+  // Get audio element and button
+  music = document.getElementById('bgMusic');
+  musicBtn = document.getElementById('musicBtn');
+  
+  if (!music) {
+    console.error('Audio element not found!');
+    if (musicBtn) {
+      musicBtn.innerHTML = '⚠️ Audio Error';
+      musicBtn.style.background = 'rgba(255, 0, 0, 0.7)';
+    }
+    return;
+  }
+  
+  if (!musicBtn) {
+    console.error('Music button not found!');
+    return;
+  }
+  
+  // Set volume to 70%
   music.volume = 0.7;
   
+  // Add click handler to button
+  musicBtn.addEventListener('click', toggleMusic);
+  
   // Handle audio events
+  music.addEventListener('loadeddata', () => {
+    console.log('Audio file loaded successfully');
+  });
+  
+  music.addEventListener('canplay', () => {
+    console.log('Audio can start playing');
+  });
+  
   music.addEventListener('play', () => {
+    console.log('Music is now playing');
     musicPlaying = true;
     musicStarted = true;
     updateMusicButton();
   });
   
   music.addEventListener('pause', () => {
+    console.log('Music is paused');
     musicPlaying = false;
     updateMusicButton();
   });
   
-  music.addEventListener('error', (e) => {
-    console.error('Audio error:', e);
-    musicBtn.innerHTML = '⚠️ Music Error';
-    musicBtn.style.background = 'rgba(255, 0, 0, 0.7)';
+  music.addEventListener('ended', () => {
+    console.log('Music ended (should loop)');
   });
   
-  music.addEventListener('canplaythrough', () => {
-    console.log('Audio ready to play');
+  music.addEventListener('error', (e) => {
+    console.error('Audio error:', e);
+    console.error('Error code:', music.error ? music.error.code : 'unknown');
+    if (music.error) {
+      switch(music.error.code) {
+        case music.error.MEDIA_ERR_ABORTED:
+          console.error('Audio loading aborted');
+          break;
+        case music.error.MEDIA_ERR_NETWORK:
+          console.error('Network error loading audio');
+          break;
+        case music.error.MEDIA_ERR_DECODE:
+          console.error('Audio decoding error');
+          break;
+        case music.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          console.error('Audio format not supported or file not found');
+          break;
+      }
+    }
+    musicBtn.innerHTML = '⚠️ Music Error';
+    musicBtn.style.background = 'rgba(255, 0, 0, 0.7)';
+    musicBtn.onclick = function() {
+      alert('Music file not found or cannot be played.\n\nPlease check:\n1. music.mp3 exists in the same folder\n2. File name matches exactly (case-sensitive)\n3. File is not corrupted');
+    };
   });
-}
+  
+  // Try to load the audio
+  music.load();
+  
+  console.log('Music element initialized');
+  console.log('Audio source:', music.src || music.currentSrc);
+});
 
 function updateMusicButton() {
   if (!musicBtn) return;
@@ -47,9 +102,13 @@ function updateMusicButton() {
 
 function toggleMusic() {
   if (!music) {
-    alert('Audio element not found. Please check if music.mp3 exists.');
+    alert('Audio element not found. Please refresh the page.');
     return;
   }
+  
+  console.log('Toggle music clicked');
+  console.log('Music paused?', music.paused);
+  console.log('Music readyState:', music.readyState);
   
   if (music.paused) {
     playMusic();
@@ -59,51 +118,71 @@ function toggleMusic() {
 }
 
 function playMusic() {
-  if (!music) return;
+  if (!music) {
+    console.error('Cannot play: music element not found');
+    return;
+  }
   
+  console.log('Attempting to play music...');
+  console.log('Current src:', music.src || music.currentSrc);
+  console.log('Ready state:', music.readyState);
+  
+  // Ensure volume is set
+  music.volume = 0.7;
+  
+  // Try to play
   const playPromise = music.play();
   
   if (playPromise !== undefined) {
     playPromise
       .then(() => {
-        // Audio is playing
+        console.log('✅ Music started playing successfully!');
         musicPlaying = true;
         musicStarted = true;
         updateMusicButton();
-        console.log('Music started playing');
       })
       .catch(error => {
-        // Autoplay was prevented
-        console.log('Playback failed:', error);
+        console.error('❌ Playback failed:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        
+        // Try to get more info
+        if (music.error) {
+          console.error('Media error code:', music.error.code);
+        }
+        
         musicBtn.innerHTML = '🎵 Click to Play';
         musicBtn.style.background = 'rgba(255, 200, 0, 0.9)';
         
-        // Try again on next user interaction
-        document.addEventListener('click', tryPlayMusic, { once: true });
+        // Show user-friendly message
+        alert('Music cannot play automatically.\n\nPlease click the play button to start music.\n\nIf it still doesn\'t work, check:\n1. music.mp3 file exists\n2. File is not corrupted\n3. Browser allows audio playback');
       });
+  } else {
+    // Fallback for older browsers
+    music.play();
+    musicPlaying = true;
+    musicStarted = true;
+    updateMusicButton();
   }
 }
 
 function pauseMusic() {
   if (!music) return;
+  
+  console.log('Pausing music...');
   music.pause();
   musicPlaying = false;
   updateMusicButton();
-}
-
-function tryPlayMusic() {
-  if (music && music.paused) {
-    playMusic();
-  }
 }
 
 // Auto-play music on first user interaction (anywhere on page)
 let interactionHandled = false;
 
 function handleFirstInteraction() {
-  if (!interactionHandled && !musicStarted) {
+  if (!interactionHandled && music && !musicStarted) {
     interactionHandled = true;
-    if (music && music.paused) {
+    console.log('First user interaction detected, trying to play music...');
+    if (music.paused) {
       playMusic();
     }
   }
@@ -114,25 +193,12 @@ document.addEventListener('click', handleFirstInteraction, { once: true });
 document.addEventListener('touchstart', handleFirstInteraction, { once: true });
 document.addEventListener('keydown', handleFirstInteraction, { once: true });
 
-// Also try to play when page loads (might work in some browsers)
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    if (music && music.paused && !musicStarted) {
-      // Try silent play first (some browsers allow this)
-      music.play().catch(() => {
-        // If that fails, wait for user interaction
-        console.log('Waiting for user interaction to play music');
-      });
-    }
-  }, 500);
-});
-
 // Scroll to section
 function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({ behavior: "smooth" });
   
   // Try to start music when user starts scrolling
-  if (!musicStarted && music) {
+  if (music && !musicStarted && music.paused) {
     playMusic();
   }
 }
@@ -233,11 +299,4 @@ document.addEventListener('DOMContentLoaded', () => {
   sections.forEach(section => {
     observer.observe(section);
   });
-  
-  // Try to play music after DOM is loaded
-  setTimeout(() => {
-    if (music && music.paused && !musicStarted) {
-      playMusic();
-    }
-  }, 1000);
 });
