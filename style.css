@@ -75,6 +75,13 @@ button {
   margin-bottom: 30px;
 }
 
+/* Make sure the celebration screen is hidden at first.
+   Using the combined selector gives it higher specificity
+   than the plain #celebration rule, so display: none wins. */
+#celebration.hidden {
+  display: none;
+}
+
 #celebration {
   position: fixed;
   inset: 0;
@@ -82,8 +89,4 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.hidden {
-  display: none;
 }
