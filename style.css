@@ -60,6 +60,28 @@ section {
   font-size: 1.3rem;
 }
 
+/* Hero Photo */
+.hero-photo {
+  margin-bottom: 30px;
+  animation: fadeInScale 1s ease-out;
+}
+
+.hero-img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 75, 125, 0.5);
+  box-shadow: 0 10px 40px rgba(255, 75, 125, 0.3);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.hero-intro-text {
+  max-width: 700px;
+  margin: 15px auto;
+  line-height: 1.8;
+}
+
 /* Floating Hearts Animation */
 .floating-hearts {
   position: absolute;
@@ -112,6 +134,14 @@ section {
 
 .fade-in-delay-2 {
   animation: fadeIn 1s ease-in 0.6s both;
+}
+
+.fade-in-delay-3 {
+  animation: fadeIn 1s ease-in 0.9s both;
+}
+
+.fade-in-delay-4 {
+  animation: fadeIn 1s ease-in 1.2s both;
 }
 
 @keyframes fadeIn {
@@ -176,6 +206,157 @@ button:hover {
 .section h2 {
   font-size: 2.5rem;
   margin-bottom: 20px;
+}
+
+/* Text Sections */
+.text-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.readable-text {
+  font-size: 1.4rem;
+  line-height: 2;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+  opacity: 0.95;
+  animation: fadeInText 0.8s ease-out both;
+}
+
+.readable-text strong {
+  color: #ff6b9d;
+  font-weight: 600;
+}
+
+.highlight-text {
+  font-size: 1.5rem;
+  color: #ffb3d1;
+  font-weight: 500;
+  text-shadow: 0 2px 10px rgba(255, 75, 125, 0.3);
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 0.95;
+    transform: translateX(0);
+  }
+}
+
+/* Section Photos */
+.section-photo-left,
+.section-photo-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.section-photo {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s ease;
+  animation: fadeInScale 0.8s ease-out both;
+}
+
+.section-photo-left .section-photo:nth-child(1) { animation-delay: 0.2s; }
+.section-photo-left .section-photo:nth-child(2) { animation-delay: 0.4s; }
+.section-photo-right .section-photo:nth-child(1) { animation-delay: 0.2s; }
+.section-photo-right .section-photo:nth-child(2) { animation-delay: 0.4s; }
+
+.section-photo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(255, 75, 125, 0.4);
+}
+
+/* Future Section */
+.future-section {
+  background: rgba(255, 75, 125, 0.05);
+  border-radius: 30px;
+  margin: 40px auto;
+}
+
+/* Anniversary Section */
+.anniversary-section {
+  background: linear-gradient(135deg, rgba(255, 75, 125, 0.1), rgba(102, 126, 234, 0.1));
+  border-radius: 30px;
+  margin: 40px auto;
+  padding: 60px 40px;
+}
+
+/* Deep Thoughts Section */
+.deep-thoughts {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  margin: 40px auto;
+}
+
+/* Final Photo Section */
+.final-photo-section {
+  padding: 80px 20px;
+}
+
+.final-photo-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.final-photo {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+.final-photo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 40px;
+  text-align: center;
+}
+
+.final-photo-text {
+  font-size: 1.8rem;
+  color: white;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Cards with Animation */
@@ -263,6 +444,15 @@ button:hover {
   75% {
     transform: translate(15px, 20px) rotate(270deg);
   }
+}
+
+/* Gallery Section */
+.gallery-section {
+  padding: 80px 20px;
+}
+
+.gallery-section h2 {
+  margin-bottom: 40px;
 }
 
 /* Gallery */
@@ -556,9 +746,39 @@ button:hover {
 }
 
 /* Responsive Design */
+@media (max-width: 968px) {
+  .text-section {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .section-photo-left,
+  .section-photo-right {
+    order: -1;
+  }
+  
+  .readable-text {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .section-photo {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 2rem;
+  }
+  
+  .hero-img {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .hero-intro-text {
+    font-size: 1.1rem;
   }
   
   .celebration-text {
@@ -572,5 +792,18 @@ button:hover {
   .proposal-buttons {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .readable-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  
+  .final-photo {
+    height: 300px;
+  }
+  
+  .final-photo-text {
+    font-size: 1.3rem;
   }
 }
