@@ -8,11 +8,13 @@
 <body>
 
 <!-- Background Music -->
-<audio id="bgMusic" loop>
+<audio id="bgMusic" loop preload="auto" volume="0.7">
   <source src="music.mp3" type="audio/mpeg">
+  <source src="music.mp3" type="audio/mp3">
+  Your browser does not support the audio element.
 </audio>
 <div id="musicControl" class="music-control">
-  <button onclick="playMusic()">🎵 Play Music</button>
+  <button id="musicBtn" onclick="toggleMusic()">🎵 Play Music</button>
 </div>
 
 <!-- Hero Section -->
@@ -78,7 +80,7 @@
 <!-- Future Dreams Section -->
 <section class="section text-section future-section">
   <div class="section-photo-left">
-    <img src="photos/photo5.jpeg" alt="Our memory" class="section-photo">
+    <img src="photos/PHOTO5.jpeg" alt="Our memory" class="section-photo">
     <img src="photos/photo6.jpeg" alt="Our memory" class="section-photo">
   </div>
   <div class="text-content">
@@ -289,4 +291,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
