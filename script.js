@@ -1,44 +1,140 @@
-// Music Control
+// Music Control - Enhanced Version
 let musicStarted = false;
+let musicPlaying = false;
 
-function playMusic() {
-  const music = document.getElementById('bgMusic');
-  const control = document.getElementById('musicControl');
+// Get audio element
+const music = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+
+// Set volume (0.0 to 1.0)
+if (music) {
+  music.volume = 0.7;
+  
+  // Handle audio events
+  music.addEventListener('play', () => {
+    musicPlaying = true;
+    musicStarted = true;
+    updateMusicButton();
+  });
+  
+  music.addEventListener('pause', () => {
+    musicPlaying = false;
+    updateMusicButton();
+  });
+  
+  music.addEventListener('error', (e) => {
+    console.error('Audio error:', e);
+    musicBtn.innerHTML = '⚠️ Music Error';
+    musicBtn.style.background = 'rgba(255, 0, 0, 0.7)';
+  });
+  
+  music.addEventListener('canplaythrough', () => {
+    console.log('Audio ready to play');
+  });
+}
+
+function updateMusicButton() {
+  if (!musicBtn) return;
+  
+  if (musicPlaying) {
+    musicBtn.innerHTML = '🔇 Pause Music';
+    musicBtn.style.background = 'rgba(255, 75, 125, 1)';
+  } else {
+    musicBtn.innerHTML = '🎵 Play Music';
+    musicBtn.style.background = 'rgba(255, 75, 125, 0.9)';
+  }
+}
+
+function toggleMusic() {
+  if (!music) {
+    alert('Audio element not found. Please check if music.mp3 exists.');
+    return;
+  }
   
   if (music.paused) {
-    music.play().then(() => {
-      musicStarted = true;
-      control.innerHTML = '<button onclick="pauseMusic()">🔇 Pause Music</button>';
-    }).catch(err => {
-      console.log('Autoplay prevented:', err);
-      alert('Click anywhere on the page to start music!');
-    });
+    playMusic();
+  } else {
+    pauseMusic();
+  }
+}
+
+function playMusic() {
+  if (!music) return;
+  
+  const playPromise = music.play();
+  
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        // Audio is playing
+        musicPlaying = true;
+        musicStarted = true;
+        updateMusicButton();
+        console.log('Music started playing');
+      })
+      .catch(error => {
+        // Autoplay was prevented
+        console.log('Playback failed:', error);
+        musicBtn.innerHTML = '🎵 Click to Play';
+        musicBtn.style.background = 'rgba(255, 200, 0, 0.9)';
+        
+        // Try again on next user interaction
+        document.addEventListener('click', tryPlayMusic, { once: true });
+      });
   }
 }
 
 function pauseMusic() {
-  const music = document.getElementById('bgMusic');
-  const control = document.getElementById('musicControl');
+  if (!music) return;
   music.pause();
-  control.innerHTML = '<button onclick="playMusic()">🎵 Play Music</button>';
+  musicPlaying = false;
+  updateMusicButton();
 }
 
-// Auto-play music on first user interaction
-document.addEventListener('click', function() {
-  if (!musicStarted) {
-    const music = document.getElementById('bgMusic');
-    music.play().then(() => {
-      musicStarted = true;
-      document.getElementById('musicControl').innerHTML = '<button onclick="pauseMusic()">🔇 Pause Music</button>';
-    }).catch(() => {
-      // Music will play when user clicks play button
-    });
+function tryPlayMusic() {
+  if (music && music.paused) {
+    playMusic();
   }
-}, { once: true });
+}
+
+// Auto-play music on first user interaction (anywhere on page)
+let interactionHandled = false;
+
+function handleFirstInteraction() {
+  if (!interactionHandled && !musicStarted) {
+    interactionHandled = true;
+    if (music && music.paused) {
+      playMusic();
+    }
+  }
+}
+
+// Listen for various user interactions
+document.addEventListener('click', handleFirstInteraction, { once: true });
+document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+document.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+// Also try to play when page loads (might work in some browsers)
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (music && music.paused && !musicStarted) {
+      // Try silent play first (some browsers allow this)
+      music.play().catch(() => {
+        // If that fails, wait for user interaction
+        console.log('Waiting for user interaction to play music');
+      });
+    }
+  }, 500);
+});
 
 // Scroll to section
 function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+  
+  // Try to start music when user starts scrolling
+  if (!musicStarted && music) {
+    playMusic();
+  }
 }
 
 // Yes button clicked
@@ -56,9 +152,8 @@ function yesClicked() {
   }, 300);
   
   // Ensure music is playing
-  const music = document.getElementById('bgMusic');
-  if (music.paused) {
-    music.play();
+  if (music && music.paused) {
+    playMusic();
   }
 }
 
@@ -138,4 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
   sections.forEach(section => {
     observer.observe(section);
   });
+  
+  // Try to play music after DOM is loaded
+  setTimeout(() => {
+    if (music && music.paused && !musicStarted) {
+      playMusic();
+    }
+  }, 1000);
 });
